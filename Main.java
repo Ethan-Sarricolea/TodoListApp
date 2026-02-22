@@ -66,7 +66,7 @@ public class Main {
                     listTasks();
                     break;
                 case 3:
-                    System.out.println("Opcion no implementada aun.");
+                    markTaskAsCompleted(scanner);
                     break;
                 case 4:
                     deleteTask(scanner);
@@ -163,6 +163,50 @@ public class Main {
             tasks.remove(taskToRemove);
             System.out.println("Tarea \"" + taskToRemove.getName() + "\" eliminada exitosamente.");
         } else {
+            System.out.println("Error: No se encontro una tarea con ID " + id + ".");
+        }
+    }
+
+    /**
+     * Marca una tarea como completada por su ID.
+     * Solicita al usuario el ID de la tarea, la busca en el ArrayList
+     * y cambia su estado a completado (true).
+     *
+     * @param scanner Objeto Scanner para leer la entrada del usuario
+     */
+    private static void markTaskAsCompleted(Scanner scanner) {
+        if (tasks.isEmpty()) {
+            System.out.println("No hay tareas para marcar.");
+            return;
+        }
+
+        listTasks();
+        System.out.print("Ingrese el ID de la tarea a marcar como completada: ");
+        String input = scanner.nextLine().trim();
+        int id;
+
+        try {
+            id = Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            System.out.println("Error: Ingrese un numero valido.");
+            return;
+        }
+
+        boolean found = false;
+        for (Task task : tasks) {
+            if (task.getId() == id) {
+                if (task.isCompleted()) {
+                    System.out.println("La tarea ya estaba marcada como completada.");
+                } else {
+                    task.setCompleted(true);
+                    System.out.println("Tarea \"" + task.getName() + "\" marcada como completada.");
+                }
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
             System.out.println("Error: No se encontro una tarea con ID " + id + ".");
         }
     }

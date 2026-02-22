@@ -1,1 +1,1 @@
-1|Terminar la actividad de despliegue|false
+1|Terminar la actividad de despliegue|true
