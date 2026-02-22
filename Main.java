@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.io.*;
 
 /**
  * Main
@@ -19,6 +20,9 @@ public class Main {
     /** Contador para generar IDs únicos de las tareas */
     private static int nextId = 1;
 
+    /** Nombre del archivo de persistencia */
+    private static final String FILE_NAME = "tareas.txt";
+
     /**
      * Método principal de la aplicación.
      * Ejecuta un bucle que muestra el menú de opciones y procesa
@@ -27,6 +31,7 @@ public class Main {
      * @param args Argumentos de línea de comandos (no utilizados)
      */
     public static void main(String[] args) {
+        loadTasks();
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
 
@@ -68,6 +73,7 @@ public class Main {
                     break;
                 case 5:
                     running = false;
+                    saveTasks();
                     System.out.println("Saliendo de la aplicacion. Hasta luego!");
                     break;
                 default:
@@ -158,6 +164,54 @@ public class Main {
             System.out.println("Tarea \"" + taskToRemove.getName() + "\" eliminada exitosamente.");
         } else {
             System.out.println("Error: No se encontro una tarea con ID " + id + ".");
+        }
+    }
+
+    /**
+     * Guarda las tareas en el archivo tareas.txt.
+     * Cada tarea se guarda en una línea con el formato: id|nombre|completada
+     */
+    private static void saveTasks() {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_NAME))) {
+            for (Task task : tasks) {
+                writer.println(task.getId() + "|" + task.getName() + "|" + task.isCompleted());
+            }
+            System.out.println("Tareas guardadas exitosamente en " + FILE_NAME);
+        } catch (IOException e) {
+            System.out.println("Error al guardar las tareas: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Carga las tareas desde el archivo tareas.txt al iniciar la aplicación.
+     * Lee el archivo línea por línea y reconstruye los objetos Task.
+     * Actualiza el contador nextId basándose en el ID más alto encontrado.
+     */
+    private static void loadTasks() {
+        File file = new File(FILE_NAME);
+        if (!file.exists()) return;
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split("\\|");
+                if (parts.length == 3) {
+                    int id = Integer.parseInt(parts[0]);
+                    String name = parts[1];
+                    boolean completed = Boolean.parseBoolean(parts[2]);
+                    
+                    Task task = new Task(id, name);
+                    task.setCompleted(completed);
+                    tasks.add(task);
+                    
+                    if (id >= nextId) {
+                        nextId = id + 1;
+                    }
+                }
+            }
+            System.out.println("Tareas cargadas exitosamente desde " + FILE_NAME);
+        } catch (IOException | NumberFormatException e) {
+            System.out.println("Error al cargar las tareas: " + e.getMessage());
         }
     }
 }
