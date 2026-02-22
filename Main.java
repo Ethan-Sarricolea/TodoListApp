@@ -64,7 +64,7 @@ public class Main {
                     System.out.println("Opcion no implementada aun.");
                     break;
                 case 4:
-                    System.out.println("Opcion no implementada aun.");
+                    deleteTask(scanner);
                     break;
                 case 5:
                     running = false;
@@ -118,5 +118,46 @@ public class Main {
         }
         System.out.println("----------------------");
         System.out.println("Total de tareas: " + tasks.size());
+    }
+
+    /**
+     * Elimina una tarea de la lista por su ID.
+     * Solicita al usuario el ID de la tarea a eliminar,
+     * la busca en el ArrayList y la remueve si existe.
+     *
+     * @param scanner Objeto Scanner para leer la entrada del usuario
+     */
+    private static void deleteTask(Scanner scanner) {
+        if (tasks.isEmpty()) {
+            System.out.println("No hay tareas para eliminar.");
+            return;
+        }
+
+        listTasks();
+        System.out.print("Ingrese el ID de la tarea a eliminar: ");
+        String input = scanner.nextLine().trim();
+        int id;
+
+        try {
+            id = Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            System.out.println("Error: Ingrese un numero valido.");
+            return;
+        }
+
+        Task taskToRemove = null;
+        for (Task task : tasks) {
+            if (task.getId() == id) {
+                taskToRemove = task;
+                break;
+            }
+        }
+
+        if (taskToRemove != null) {
+            tasks.remove(taskToRemove);
+            System.out.println("Tarea \"" + taskToRemove.getName() + "\" eliminada exitosamente.");
+        } else {
+            System.out.println("Error: No se encontro una tarea con ID " + id + ".");
+        }
     }
 }
