@@ -45,7 +45,8 @@ public class Main {
             System.out.println("2. Listar tareas");
             System.out.println("3. Marcar tarea como completada");
             System.out.println("4. Eliminar tarea");
-            System.out.println("5. Salir");
+            System.out.println("5. Filtrar tareas");
+            System.out.println("6. Salir");
             System.out.print("Seleccione una opcion: ");
 
             String input = scanner.nextLine().trim();
@@ -72,12 +73,15 @@ public class Main {
                     deleteTask(scanner);
                     break;
                 case 5:
+                    filterTasks(scanner);
+                    break;
+                case 6:
                     running = false;
                     saveTasks();
                     System.out.println("Saliendo de la aplicacion. Hasta luego!");
                     break;
                 default:
-                    System.out.println("Opcion no valida. Seleccione entre 1 y 5.");
+                    System.out.println("Opcion no valida. Seleccione entre 1 y 6.");
                     break;
             }
         }
@@ -257,5 +261,50 @@ public class Main {
         } catch (IOException | NumberFormatException e) {
             System.out.println("Error al cargar las tareas: " + e.getMessage());
         }
+    }
+
+    /**
+     * Permite al usuario filtrar y ver las tareas según su estado.
+     * Muestra un submenú para elegir entre todas, completadas o pendientes.
+     *
+     * @param scanner Objeto Scanner para leer la entrada del usuario
+     */
+    private static void filterTasks(Scanner scanner) {
+        if (tasks.isEmpty()) {
+            System.out.println("No hay tareas para filtrar.");
+            return;
+        }
+
+        System.out.println("\n--- Filtrar Tareas ---");
+        System.out.println("1. Ver todas");
+        System.out.println("2. Ver completadas");
+        System.out.println("3. Ver pendientes");
+        System.out.print("Seleccione un filtro: ");
+
+        String input = scanner.nextLine().trim();
+        int filterOption;
+
+        try {
+            filterOption = Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            System.out.println("Error: Ingrese un numero valido.");
+            return;
+        }
+
+        System.out.println("\n--- Resultados del Filtro ---");
+        int count = 0;
+        for (Task task : tasks) {
+            if (filterOption == 1 || 
+               (filterOption == 2 && task.isCompleted()) || 
+               (filterOption == 3 && !task.isCompleted())) {
+                System.out.println(task.toString());
+                count++;
+            }
+        }
+
+        if (count == 0) {
+            System.out.println("No se encontraron tareas con ese filtro.");
+        }
+        System.out.println("-----------------------------");
     }
 }
